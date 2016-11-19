@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">Hack</string>
+    <string name="action_settings">Settings</string>
+    <string name="explanation">Hello!</string>
+</resources>

@@ -27,10 +27,18 @@ function do_query($link, $sql){
     return false;
 }
 
-$link = query_connect("localhost", "root", "", "finhacks");
-if ($link){
-    var_dump(do_query($link, "select * from fh_users"));
+//Request from Cisco server
+if(1 || isset($_POST['request_type']) && $_POST['request_type'] == "transaction_query"){
+    //parse request parameters and query db
+    $link = query_connect("localhost", "root", "", "finhacks");
+    if ($link){
+        $result = do_query($link, "select * from fh_records");
+        //var_dump($result);
+        echo json_encode($result);
+    }
 }
+
+//
 
 
 
