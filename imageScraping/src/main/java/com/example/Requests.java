@@ -11,25 +11,27 @@ import org.json.simple.parser.JSONParser;
 import java.util.*;
 import okhttp3.*;
 
+//CHANGE URL IN postToServer METHOD BEFORE PRESENTING-----------------------------------------------
+
 public class Requests {
 
     //class fields, simulating browser
     private final String USER_AGENT = "Mozilla/5.0";
 
-    //main loop, starting point for JVM
-    public static void main(String[] args) throws Exception {
+//    //main loop, starting point for JVM
+//    public static void main(String[] args) throws Exception {
+//
+//        //instance of main class
+//        Requests http = new Requests();
+//        http.customPost("C:\\Users\\Mark Emery\\Downloads\\unnamed.png");
+//
+//		/*String message = http.parseJsonParams(response);*/
+//		/*System.out.println(message);*/
+//    }
 
-        //instance of main class
-        Requests http = new Requests();
-        http.customPost("http://api.ocr.space/parse/image",
-                "C:\\Users\\Mark Emery\\Downloads\\unnamed.png", "37c7b26dcb88957");
-
-		/*String message = http.parseJsonParams(response);*/
-		/*System.out.println(message);*/
-    }
-
-    private void customPost(String url, String filename, String apiKey) throws Exception{
-
+    private void customPost(String filename) throws Exception{
+        String url = "http://api.ocr.space/parse/image";
+        String apiKey = "37c7b26dcb88957";
         File file = new File(filename);
         OkHttpClient client = new OkHttpClient();
 
