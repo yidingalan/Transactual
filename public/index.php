@@ -6,6 +6,9 @@ echo "2. When Cisco server queries our db we'll return transaction history.";*/
 
 //@TODO: Add card type?
 
+//for time functions, technically should be passed in from client but YOLO lmao
+date_default_timezone_set('America/Toronto');
+
 function query_connect($server, $user, $pwd, $db){
     $link = mysqli_connect($server, $user, $pwd, $db);
     if (!$link){
@@ -20,7 +23,7 @@ function query_connect($server, $user, $pwd, $db){
 function do_query($link, $sql){
     $resultArr = array();
     $result = mysqli_query($link, $sql); //var_dump(mysqli_query($link, $sql)); die;
-    if($result === true){ //imporant to use strict comparison here
+    if($result === true){ //important to use strict comparison here
         return true;
     }
     if (mysqli_num_rows($result) > 0) {
@@ -30,6 +33,23 @@ function do_query($link, $sql){
         return $resultArr;
     }
     return false;
+}
+
+function check_phone_number($phone_number){
+    $link = query_connect("localhost", "root", "", "finhacks");
+    $sql = "select * from fh_users where phone_number = $phone_number;";
+    if ($link){
+        $result = do_query($link, $sql);
+        //number valid
+        if($result){
+            return true;
+        }else{
+            echo "Invalid Phone Number! ".$phone_number;
+            die;
+        }
+    }else {
+        die;
+    }
 }
 
 $is_valid_request = false;
@@ -43,11 +63,10 @@ if(isset($_POST['request_type']) && $_POST['request_type'] == "transaction_data"
     }
     if (isset($_POST['phone_number'])){
         $phone_number = $_POST['phone_number'];
+        check_phone_number($phone_number);
     }
 
     //default insertion query
-    //@TODO : determine id based on phone number (inner join)
-
     $sql = "insert into fh_records (user_id, amount, payment_date) VALUES((select user_id from fh_users where phone_number = $phone_number), ".$amount.", NOW());";
 
     $link = query_connect("localhost", "root", "", "finhacks");
@@ -66,11 +85,13 @@ if(isset($_POST['request_type']) && $_POST['request_type'] == "transaction_data"
 //History request from Cisco server
 if(isset($_POST['request_type']) && $_POST['request_type'] == "transaction_query"){
     $is_valid_request = true;
+
     //expected post params
     $phone_number = ""; $message = "";
 
     if (isset($_POST['phone_number'])){
         $phone_number = strtolower($_POST['phone_number']);
+        check_phone_number($phone_number);
     }
     if (isset($_POST['message'])){
         $message = strtolower($_POST['message']);
@@ -96,23 +117,22 @@ if(isset($_POST['request_type']) && $_POST['request_type'] == "transaction_query
     $time_range = array("start" => "2015-01-01 12:00:00", "end" => "2020-01-01 12:00:00");
 
     if (strpos($message, 'month') !== false ||  strpos($message, 'monthly') !== false) {
-        //@TODO: generate month dynamically
-        $time_range['start'] = "2016-11-01 00:00:00";
-        $time_range['end'] = "2016-11-30 23:59:59";
+        $time_range['start'] = date('Y-m-d G:i:s', mktime(date("H"), date("i"), date("s"), date("m")  , date("d")-30, date("Y")));;
+        $time_range['end'] = date('Y-m-d G:i:s');
     }
     if (strpos($message, 'week') !== false ||  strpos($message, 'weekly') !== false) {
-        //@TODO: generate week dynamically
-        $time_range['start'] = "2016-11-14 00:00:00";
-        $time_range['end'] = "2016-11-21 23:59:59";
+        $time_range['start'] = date('Y-m-d G:i:s', mktime(date("H"), date("i"), date("s"), date("m")  , date("d")-7, date("Y")));
+        $time_range['end'] = date('Y-m-d G:i:s');
     }
     if (strpos($message, 'today') !== false ||  strpos($message, 'daily') !== false) {
-        //@TODO: generate day dynamically
-        $time_range['start'] = "2016-11-19 00:00:00";
-        $time_range['end'] = "2016-11-19 23:59:59";
+        $time_range['start'] = date('Y-m-d G:i:s', mktime(date("H"), date("i"), date("s"), date("m")  , date("d")-1, date("Y")));;
+        $time_range['end'] = date('Y-m-d G:i:s');
+        //var_dump($time_range); die;
     }
+    //@TODO : allow custom date ranges
 
     //dynamic query
-    $sql = "select * from fh_records where payment_date > '" . $time_range['start'] . "' and payment_date < '" . $time_range['end']."'";
+    $sql = "select * from fh_records where payment_date > '" . $time_range['start'] . "' and payment_date < '" . $time_range['end']."' and user_id = (select user_id from fh_users where phone_number = $phone_number)";
 
     //query db and output result
     $link = query_connect("localhost", "root", "", "finhacks");
@@ -120,7 +140,10 @@ if(isset($_POST['request_type']) && $_POST['request_type'] == "transaction_query
         $result = do_query($link, $sql);
 
         //@TODO: pretty print the output
-        echo json_encode($result);
+        //echo json_encode($result);
+        foreach($result as $key => $row){
+            echo $row['payment_date']." => ".$row['amount'];
+        }
     }
 }
 
