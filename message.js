@@ -1,5 +1,5 @@
-call("+16476319895", {
-   network:"SMS"});
+// call("+16476319895", {
+//    network:"SMS"});
 // //say("Don't forget your meeting at 2 p.m. on Wednesday!yooooooo");
 //
 // //Testing some responsiveness stuff
@@ -14,52 +14,75 @@ call("+16476319895", {
 // //}
 
 //Load jQuery
-var script = document.createElement('script');
-script.src = 'http://code.jquery.com/jquery-1.11.0.min.js';
-script.type = 'text/javascript';
-document.getElementsByTagName('head')[0].appendChild(script);
+// var script = document.createElement('script');
+// script.src = 'http://code.jquery.com/jquery-1.11.0.min.js';
+// script.type = 'text/javascript';
+// document.getElementsByTagName('head')[0].appendChild(script);
+
+call("+16476319895", {
+   network:"SMS"});
+
 
 var text;
 var http = new XMLHttpRequest();
+var response;
 
 //Start of post request
-var url = "http://6a30fac5.ngrok.io/index.php";
+var url = "https://629e1edd.ngrok.io/index.php";
 var params = "request_type=transaction_query&phone_number=+16476319895&message=daily";
 http.open("POST", url, true);
 
 http.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
 
 http.onreadystatechange = function(){
-   console.log(http.readyState);
-   console.log(http.status);
+  console.log(http.readyState);
+  console.log(http.status);
+  //Note that this is a async function
     if(http.readyState == 4 && http.status == 200) {
-        alert(http.responseText);
+      //response = http.responseText;
+        console.log(http.responseText);
+        response = JSON.parse(http.responseText);
+        console.log(response);
+
+        var length = response.length;
+        for (var i = 0; i < length; i++){
+          text += "You spent " + response[i].amount + " on " + response[i].payment_date + "\n";
+        }
+        console.log(text);
+        console.log(typeof(text));
+        say(text);
+        //console.log(obj);
     }
 }
 http.send(params);
+//console.log(response);
 
-//get the data from db
-function getData(done, fail) {
-    $.getJSON(url, function(data) {
-        if (typeof(done) === 'function') done(data);
-    }).fail(function() {
-    if (typeof(fail) === 'function') fail();
-    });
-}
+// function getData(done, fail) {
+//     $.getJSON(url, function(data) {
+//         if (typeof(done) === 'function') done(data);
+//         console.log("success");
+//     }).fail(function() {
+//     if (typeof(fail) === 'function') fail();
+//    console.log("fail");
+//     });
+// }
+//
+// var success = function (data) {
+//     if (!data) return;
+//     var length = data.length;
+//
+//     for (var i = 0; i < length; i++){
+//         text += data[i] + " ";
+//     }
+// };
+//
+// var fail = function () {
+//     return;
+// };
+//
+// var getText = getData(success, fail);
+//console.log(typeof(text));
+//console.log(text);
+//console.log(response);
 
-var success = function (data) {
-    if (!data) return;
-    var length = data.length;
-
-    for (var i = 0; i < length; i++){
-        text += data[i] + " ";
-    }
-};
-
-var fail = function () {
-    return;
-};
-
-var getText = getData(success, fail);
-
-say(text);
+// say(text);
