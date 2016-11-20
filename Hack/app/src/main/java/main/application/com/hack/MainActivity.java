@@ -48,7 +48,7 @@ public class MainActivity extends AppCompatActivity {
     private MediaProjectionManager mProjectionManager;
     private static MediaProjection sMediaProjection;
     private static final String SCREENCAP_NAME = "screencap";
-    private static final int mImageTimer = 3;
+    private static final int mImageTimer = 5;
 
     private ImageReader mImageReader;
     private Handler mHandler;
@@ -143,6 +143,8 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
 
+        IMAGES_PRODUCED = 0;
+
         mTextView = (TextView) findViewById(R.id.Title);
 
         mNfcAdapter = NfcAdapter.getDefaultAdapter(this);
@@ -223,7 +225,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void saveImage(){
-        final String lastImage = STORE_DIRECTORY + "/myscreen_" + IMAGES_PRODUCED + ".png";
+        final String lastImage = STORE_DIRECTORY + "/myscreen_" + (IMAGES_PRODUCED - 2) + ".png";
 
 
             Handler handler = new Handler();

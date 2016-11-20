@@ -60,7 +60,7 @@ public class Requests {
 
     private void postToServer(String card, double payment, String phoneNumber) throws Exception {
 
-        String url = "http://4afaecea.ngrok.io";
+        String url = "http://124c8d97.ngrok.io";
 
         OkHttpClient client = new OkHttpClient();
 
