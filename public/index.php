@@ -82,6 +82,12 @@ if(isset($_POST['request_type']) && $_POST['request_type'] == "transaction_data"
     }
 }
 
+function parse_sql_timestamp($timestamp, $format = 'd-m-Y')
+{
+    $date = new DateTime($timestamp);
+    return $date->format($format);
+}
+
 //History request from Cisco server
 if(isset($_POST['request_type']) && $_POST['request_type'] == "transaction_query"){
     $is_valid_request = true;
@@ -96,7 +102,7 @@ if(isset($_POST['request_type']) && $_POST['request_type'] == "transaction_query
     if (isset($_POST['message'])){
         $message = strtolower($_POST['message']);
     }
-    //hardcorde to test
+    //test
     $messsage = "What did I buy today?";
 
     /*
@@ -105,6 +111,7 @@ if(isset($_POST['request_type']) && $_POST['request_type'] == "transaction_query
     -weekly, week
     -monthly, month
     -price
+    -expensive
     -card type
 
     Concatenations:
@@ -119,20 +126,44 @@ if(isset($_POST['request_type']) && $_POST['request_type'] == "transaction_query
     if (strpos($message, 'month') !== false ||  strpos($message, 'monthly') !== false) {
         $time_range['start'] = date('Y-m-d G:i:s', mktime(date("H"), date("i"), date("s"), date("m")  , date("d")-30, date("Y")));;
         $time_range['end'] = date('Y-m-d G:i:s');
+        //var_dump($time_range); die;
     }
     if (strpos($message, 'week') !== false ||  strpos($message, 'weekly') !== false) {
         $time_range['start'] = date('Y-m-d G:i:s', mktime(date("H"), date("i"), date("s"), date("m")  , date("d")-7, date("Y")));
         $time_range['end'] = date('Y-m-d G:i:s');
+        //var_dump($time_range); die;
     }
     if (strpos($message, 'today') !== false ||  strpos($message, 'daily') !== false) {
         $time_range['start'] = date('Y-m-d G:i:s', mktime(date("H"), date("i"), date("s"), date("m")  , date("d")-1, date("Y")));;
         $time_range['end'] = date('Y-m-d G:i:s');
-        //var_dump($time_range); die;
+        //var_dump(parse_sql_timestamp($time_range)); die;
     }
     //@TODO : allow custom date ranges
 
+    if (strpos($message, 'expensive') !== false ||  strpos($message, 'pice') !== false) {
+        $order = " order by amount desc ";
+    }else{
+        $order = "";
+    }
+
+    preg_match_all('!\d+!', $message, $matches);
+    if(count($matches[0])>0){
+        $limit = "limit ".$matches[0][0]; //lmaoooooo
+        //var_dump ($matches); die;
+    }else{
+        $limit = "";
+    }
+
+    if (strpos($message, 'expensive') !== false ||  strpos($message, 'daily') !== false) {
+        $order = " order by amount desc ";
+    }else{
+        $order = "";
+    }
+
     //dynamic query
-    $sql = "select * from fh_records where payment_date > '" . $time_range['start'] . "' and payment_date < '" . $time_range['end']."' and user_id = (select user_id from fh_users where phone_number = $phone_number)";
+    $sql = "select * from fh_records where payment_date > '" . $time_range['start'] . "' and payment_date < '" . $time_range['end']."' and user_id = (select user_id from fh_users where phone_number = $phone_number)".$order." $limit";
+
+    //var_dump($matches); die;
 
     //query db and output result
     $link = query_connect("localhost", "root", "", "finhacks");
@@ -142,14 +173,14 @@ if(isset($_POST['request_type']) && $_POST['request_type'] == "transaction_query
         //@TODO: pretty print the output
         //echo json_encode($result);
         foreach($result as $key => $row){
-            echo $row['payment_date']." => ".$row['amount'];
+            echo "Date: ".$row['payment_date']." Price: ".$row['amount']." --- ";
         }
     }
 }
 
 //invalid request
 if($is_valid_request == false){
-    echo "HTTP 500 ERROR: Sorry, you've sent an invalid request!";
+    echo "HTTP 500: Sorry, you've sent an invalid request!";
     //print_r($_POST);
     //print_r($_GET);
 }
