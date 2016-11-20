@@ -1,0 +1,23 @@
+#intro{
+  text-align: center;
+  display: block;
+  width: 100vw;
+  height: 100vh;
+  background-image: url("wall.jpg");
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center;
+}
+
+#intro h1{
+  padding-top: 30vh;
+  font-size: 40px;
+  font-family: 'Kanit', sans-serif;
+  color: #FFF;
+}
+
+#intro h2{
+  font-size: 20px;
+  font-family: 'Kanit', sans-serif;
+  color: #FFF;
+}
