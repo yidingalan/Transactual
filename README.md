@@ -1,3 +1,3 @@
 # Finhacks-
 
-![Alt text](Finhacks-/web/HackathonScreen-page-001.jpg?raw=true)
+![image](https://raw.githubusercontent.com/yidingalan/Finhacks-/master/web/HackathonScreen-page-001.jpg)
