@@ -1,5 +1,5 @@
-// call("+16476319895", {
-//    network:"SMS"});
+call("+16476319895", {
+   network:"SMS"});
 // //say("Don't forget your meeting at 2 p.m. on Wednesday!yooooooo");
 //
 // //Testing some responsiveness stuff
@@ -19,8 +19,8 @@
 // script.type = 'text/javascript';
 // document.getElementsByTagName('head')[0].appendChild(script);
 
-call("+16476319895", {
-   network:"SMS"});
+// call("+16476319895", {
+//    network:"SMS"});
 
 
 var text;
@@ -28,7 +28,7 @@ var http = new XMLHttpRequest();
 var response;
 
 //Start of post request
-var url = "https://629e1edd.ngrok.io/index.php";
+var url = "http://4afaecea.ngrok.io/index.php";
 var params = "request_type=transaction_query&phone_number=+16476319895&message=daily";
 http.open("POST", url, true);
 
