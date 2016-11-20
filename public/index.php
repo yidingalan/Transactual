@@ -122,18 +122,21 @@ if(isset($_POST['request_type']) && $_POST['request_type'] == "transaction_query
 
     //default time range includes all transactions
     $time_range = array("start" => "2015-01-01 12:00:00", "end" => "2020-01-01 12:00:00");
-
+    $lmao = "all recorded purchases";
     if (strpos($message, 'month') !== false ||  strpos($message, 'monthly') !== false) {
+        $lmao = " the month";
         $time_range['start'] = date('Y-m-d G:i:s', mktime(date("H"), date("i"), date("s"), date("m")  , date("d")-30, date("Y")));;
         $time_range['end'] = date('Y-m-d G:i:s');
         //var_dump($time_range); die;
     }
     if (strpos($message, 'week') !== false ||  strpos($message, 'weekly') !== false) {
+        $lmao = "the week";
         $time_range['start'] = date('Y-m-d G:i:s', mktime(date("H"), date("i"), date("s"), date("m")  , date("d")-7, date("Y")));
         $time_range['end'] = date('Y-m-d G:i:s');
         //var_dump($time_range); die;
     }
     if (strpos($message, 'today') !== false ||  strpos($message, 'daily') !== false) {
+        $lmao = "the day";
         $time_range['start'] = date('Y-m-d G:i:s', mktime(date("H"), date("i"), date("s"), date("m")  , date("d")-1, date("Y")));;
         $time_range['end'] = date('Y-m-d G:i:s');
         //var_dump(parse_sql_timestamp($time_range)); die;
@@ -141,9 +144,9 @@ if(isset($_POST['request_type']) && $_POST['request_type'] == "transaction_query
     //@TODO : allow custom date ranges
 
     if (strpos($message, 'expensive') !== false ||  strpos($message, 'pice') !== false) {
-        $order = " order by amount desc ";
+        $order = " order by payment_date, amount desc ";
     }else{
-        $order = "";
+        $order = "order by payment_date desc";
     }
 
     preg_match_all('!\d+!', $message, $matches);
@@ -154,10 +157,10 @@ if(isset($_POST['request_type']) && $_POST['request_type'] == "transaction_query
         $limit = "";
     }
 
-    if (strpos($message, 'expensive') !== false ||  strpos($message, 'daily') !== false) {
-        $order = " order by amount desc ";
+    if (strpos($message, 'expensive') !== false ||  strpos($message, 'price') !== false) {
+        $order = " order by payment_date, amount desc ";
     }else{
-        $order = "";
+        $order = " order by payment_date desc";
     }
 
     //dynamic query
@@ -172,6 +175,14 @@ if(isset($_POST['request_type']) && $_POST['request_type'] == "transaction_query
 
         //@TODO: pretty print the output
         //echo json_encode($result);
+        $total = 0;
+        foreach($result as $key => $row){
+            $total += $row['amount'];
+        }
+        if (strpos($message, 'total') !== false ||  strpos($message, 'sum') !== false) {
+            echo "Total for $lmao: $total";
+            die;
+        }
         foreach($result as $key => $row){
             echo "Date: ".$row['payment_date']." Price: ".$row['amount']." --- ";
         }
