@@ -1,23 +1,116 @@
-#intro{
-  text-align: center;
-  display: block;
+body{
   width: 100vw;
   height: 100vh;
   background-image: url("wall.jpg");
   background-repeat: no-repeat;
   background-size: cover;
   background-position: center;
+  background-attachment: fixed;
+}
+
+#intro{
+  display: block;
+  text-align: center;
+  position: fixed;
+  width: 100vw;
+  height: 100vh;
+}
+
+#description{
+  display: block;
+  text-align: center;
+  position: fixed;
+  width: 100vw;
+  height: 100vh;
+  right: -100vw;
+  top: 0;
+  opacity: 0;
+}
+
+#demo{
+  display: block;
+  text-align: center;
+  position: fixed;
+  width: 100vw;
+  height: 100vh;
+  opacity: 0;
+  right: -200vw;
+}
+
+.d1{
+  line-height: 30px;
+  float: left;
+  text-align: left;
+  width: 35vw;
+  padding-left: 5vw;
+  padding-top: 20vh;
+}
+
+.demoText{
+  font-family: 'Work Sans', sans-serif;
+  font-size: 20px;
+  color: #FFF;
+}
+
+.d2{
+  float: right;
+  padding-top: 5vh;
+  padding-right: 5vw;
+  line-height: 35px;
+  font-size: 30px;
+}
+
+.descriptionText{
+  font-family: 'Work Sans', sans-serif;
+  font-size: 20px;
+  width: 80vw;
+  padding-left: 20vw;
+  color: #FFF;
 }
 
 #intro h1{
-  padding-top: 30vh;
-  font-size: 40px;
-  font-family: 'Kanit', sans-serif;
-  color: #FFF;
+  font-size: 60px;
 }
 
 #intro h2{
+  padding-top: 15px;
   font-size: 20px;
+}
+
+.introText{
+  opacity: 0;
   font-family: 'Kanit', sans-serif;
   color: #FFF;
+  line-height: 30px;
+}
+
+
+.fa-money{
+  color: #FFF;
+  padding-top: 30vh;
+}
+
+.fa-lightbulb-o{
+  color: #FFF;
+  padding-top: 10vh;
+}
+
+#introBtn{
+  opacity: 0;
+  width: 200px;
+  color: #FFF;
+  background-color: rgba(0,0,0,0.3);
+  margin-top: 10px;
+}
+
+#descriptionBtn{
+  opacity: 0;
+  width: 200px;
+  color: #FFF;
+  margin-top: 10px;
+  background-color: rgba(0,0,0,0.3);
+}
+
+i{
+  color: #66ff66;
 }

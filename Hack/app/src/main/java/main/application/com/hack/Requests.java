@@ -1,10 +1,13 @@
-package com.example;
+package main.application.com.hack;
 
 /**
  * Created by Mark Emery on 11/19/2016.
  */
 
 //import required Java libraries
+import android.util.Log;
+import android.widget.Toast;
+
 import java.io.File;
 import org.json.simple.*;
 import org.json.simple.parser.JSONParser;
@@ -18,6 +21,7 @@ public class Requests {
     //class fields, simulating browser
     private final String USER_AGENT = "Mozilla/5.0";
 
+    public double RESULT;
 //    //main loop, starting point for JVM
 //    public static void main(String[] args) throws Exception {
 //
@@ -29,7 +33,7 @@ public class Requests {
 //		/*System.out.println(message);*/
 //    }
 
-    private void customPost(String filename) throws Exception{
+    public void customPost(String filename, String phoneNumber) throws Exception{
         String url = "http://api.ocr.space/parse/image";
         String apiKey = "37c7b26dcb88957";
         File file = new File(filename);
@@ -49,22 +53,21 @@ public class Requests {
 
         Response response = client.newCall(request).execute();
         String responseBody = response.body().string();
-
-        System.out.println(purchaseCard(responseBody) + "\nMax: " + purchaseValue(responseBody));
-        postToServer(purchaseCard(responseBody), purchaseValue(responseBody));
-
+        Log.e("Requests.java: ", responseBody);
+        Log.e("Requests.java;", purchaseCard(responseBody) + "\nMax: " + purchaseValue(responseBody));
+        postToServer(purchaseCard(responseBody), purchaseValue(responseBody), phoneNumber);
     }
 
-    private void postToServer(String card, double payment) throws Exception {
+    private void postToServer(String card, double payment, String phoneNumber) throws Exception {
 
-        String url = "https://3a57884e.ngrok.io/";
+        String url = "http://4afaecea.ngrok.io";
 
         OkHttpClient client = new OkHttpClient();
 
         RequestBody requestBody = new FormBody.Builder()
                 .add("request_type", "transaction_data")
                 .add("amount", Double.toString(payment))
-                .add("phone_number", "????")
+                .add("phone_number", phoneNumber)
 //                .add("card", card)
                 .build();
 
@@ -74,7 +77,7 @@ public class Requests {
                 .build();
 
         Response response = client.newCall(request).execute();
-        System.out.print(response.body().string());
+        Log.e("Requests.java:", response.body().string());
     }
 
     private String purchaseCard(String responseBody) throws Exception{
@@ -84,28 +87,44 @@ public class Requests {
         jsonResponse = (JSONObject) jsonArray.get(0);
         String parsedResponse = (String) jsonResponse.get("ParsedText");
         String[] possibleCards = {"VISA", "Visa", "Mastercard", "MASTERCARD"};
-        String cardUsed = "";
-        for (String card : possibleCards){
-            if(!cardUsed.equals("")) break;
-            cardUsed = parsedResponse.substring(parsedResponse.indexOf(card), parsedResponse.indexOf("\n", parsedResponse.indexOf(card)));
+        String cardUsed = "DEFAULT_ERROR";
+        for (String card : possibleCards) {
+            if (!cardUsed.equals("DEFAULT_ERROR") || ( (parsedResponse.indexOf(possibleCards[0])== -1)
+                    && (parsedResponse.indexOf(possibleCards[1])== -1)&& (parsedResponse.indexOf(possibleCards[2])== -1)
+                    && (parsedResponse.indexOf(possibleCards[3])== -1) )) {
+                break;
+            } else {
+                cardUsed = parsedResponse.substring(parsedResponse.indexOf(card), parsedResponse.indexOf("\n", parsedResponse.indexOf(card)));
+            }
         }
-
         return cardUsed;
     }
 
     private double purchaseValue(String responseBody){
-        String str = responseBody.replaceAll("[^$?.?0-9]+", " ");
+        String str = "DEFAULT_ERROR";
+        Log.d("Vals: ", responseBody.replaceAll("[^$?.?0-9]+", " "));
+        if(responseBody.replaceAll("[^$?.?0-9]+", " ").equals("")){
+            return -1.0;
+        }
+        str = responseBody.replaceAll("[^$?.?0-9]+", " ");
+        Log.d("Values: ", str);
         str = str.replaceAll("[^.?0-9]+", " ");
+        Log.d("Values: ", str);
         List list = Arrays.asList(str.trim().split(" "));
+        Log.d("List: ", str);
         double maximum = -1.0;
         for (Object temp : list) {
-            if(temp.toString().indexOf('.') != -1){
+            if(temp.toString().indexOf('.') != -1 &&
+                    !(temp.toString().replaceAll("[^0-9]+", "").equals(""))){
+
+                Log.e("Ohmygod: ", Double.toString(Double.parseDouble(temp.toString())));
                 if(Double.parseDouble(temp.toString()) > maximum){
                     maximum = Double.parseDouble(temp.toString());
+                    Log.d("Maximum = ", Double.toString(maximum));
                 }
             }
         }
-
-        return maximum;
+        RESULT = (double)((int)(maximum*100))/100;
+        return (double)((int)(maximum*100))/100;
     }
 }
