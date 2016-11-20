@@ -38,8 +38,8 @@ body{
 }
 
 .d1{
+  float:left;
   line-height: 30px;
-  float: left;
   text-align: left;
   width: 35vw;
   padding-left: 5vw;
@@ -52,12 +52,19 @@ body{
   color: #FFF;
 }
 
+.demoText3{
+  float:right;
+  bottom: 20vh;
+  right:10vw;
+}
+
 .d2{
-  float: right;
-  padding-top: 5vh;
-  padding-right: 5vw;
   line-height: 35px;
+  position: fixed;
   font-size: 30px;
+  top: 20vh;
+  float: right;
+  left: 60vw;
 }
 
 .descriptionText{
@@ -70,6 +77,21 @@ body{
 
 #intro h1{
   font-size: 60px;
+}
+
+#scr{
+  position: fixed;
+  display: none;
+height: 370px;
+transform: rotate(-5deg);
+right: 45vw;
+top: 165px;
+}
+
+.fa-github{
+  float: right;
+  padding-top: 80vh;
+  padding-right: 20vw;
 }
 
 #intro h2{

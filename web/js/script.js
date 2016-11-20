@@ -28,8 +28,9 @@ $("#descriptionBtn").click(function(){
     right:"0vw",
     opacity:"1"
   },1000);
-  $(".d1").delay(500).fadeTo(500,1);
-  $(".d2").delay(1000).fadeTo(500,1);
+  $(".d1").delay(1500).fadeTo(500,1);
+  $(".d2").delay(2000).fadeTo(500,1);
+  $("#scr").fadeIn(500);
 })
 
 }(jQuery);
